@@ -104,6 +104,38 @@ impl UndoManager {
     pub fn peer(&self) -> PeerID {
         self.0.lock().unwrap().peer()
     }
+
+    pub fn top_undo_meta(&self) -> Option<UndoItemMeta> {
+        self.0
+            .lock()
+            .unwrap()
+            .top_undo_meta()
+            .map(UndoItemMeta::from)
+    }
+
+    pub fn top_redo_meta(&self) -> Option<UndoItemMeta> {
+        self.0
+            .lock()
+            .unwrap()
+            .top_redo_meta()
+            .map(UndoItemMeta::from)
+    }
+
+    pub fn top_undo_value(&self) -> Option<LoroValue> {
+        self.0
+            .lock()
+            .unwrap()
+            .top_undo_value()
+            .map(Into::into)
+    }
+
+    pub fn top_redo_value(&self) -> Option<LoroValue> {
+        self.0
+            .lock()
+            .unwrap()
+            .top_redo_value()
+            .map(Into::into)
+    }
 }
 
 pub trait OnPush: Send + Sync {
