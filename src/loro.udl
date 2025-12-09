@@ -44,6 +44,12 @@ interface LocalUpdateCallback{
 };
 
 [Trait, WithForeign]
+interface JsonPathSubscriber{
+    /// Called when a change may affect the subscribed JSONPath query.
+    void on_jsonpath_changed();
+};
+
+[Trait, WithForeign]
 interface Unsubscriber{
     void on_unsubscribe();
 };
@@ -528,6 +534,13 @@ interface LoroDoc{
     /// ```
     [Throws=JsonPathError]
     sequence<ValueOrContainer> jsonpath([ByRef] string path);
+
+    /// Subscribe to updates that might affect the given JSONPath query.
+    ///
+    /// The callback may fire false positives; it is intended as a lightweight notification so
+    /// callers can debounce or throttle before re-running JSONPath themselves.
+    [Throws=LoroError]
+    Subscription subscribe_jsonpath([ByRef] string path, JsonPathSubscriber callback);
 
     /// Traverses the ancestors of the Change containing the given ID, including itself.
     ///

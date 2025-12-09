@@ -121,8 +121,7 @@ impl LoroText {
 
     /// Delete specified range and insert a string at the same UTF-16 position.
     pub fn splice_utf16(&self, pos: u32, len: u32, s: &str) -> LoroResult<()> {
-        self.inner
-            .splice_utf16(pos as usize, len as usize, s)
+        self.inner.splice_utf16(pos as usize, len as usize, s)
     }
 
     /// Whether the text container is empty.
@@ -188,11 +187,8 @@ impl LoroText {
         key: &str,
         value: Arc<dyn LoroValueLike>,
     ) -> LoroResult<()> {
-        self.inner.mark_utf8(
-            from as usize..to as usize,
-            key,
-            value.as_loro_value(),
-        )
+        self.inner
+            .mark_utf8(from as usize..to as usize, key, value.as_loro_value())
     }
 
     pub fn mark_utf16(
@@ -202,11 +198,8 @@ impl LoroText {
         key: &str,
         value: Arc<dyn LoroValueLike>,
     ) -> LoroResult<()> {
-        self.inner.mark_utf16(
-            from as usize..to as usize,
-            key,
-            value.as_loro_value(),
-        )
+        self.inner
+            .mark_utf16(from as usize..to as usize, key, value.as_loro_value())
     }
 
     /// Unmark a range of text with a key and a value.
@@ -230,8 +223,7 @@ impl LoroText {
     }
 
     pub fn unmark_utf16(&self, from: u32, to: u32, key: &str) -> LoroResult<()> {
-        self.inner
-            .unmark_utf16(from as usize..to as usize, key)
+        self.inner.unmark_utf16(from as usize..to as usize, key)
     }
 
     /// Get the text in [Delta](https://quilljs.com/docs/delta/) format.

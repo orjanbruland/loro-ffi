@@ -10,6 +10,8 @@ Foreign Function Interface (FFI) bindings for [Loro](https://loro.dev), a high-p
 
 Loro FFI provides cross-language bindings for the Loro CRDT library, enabling developers to use Loro's powerful collaborative editing capabilities in various programming languages. Built with [UniFFI](https://mozilla.github.io/uniffi-rs/), this library generates clean, idiomatic bindings for multiple target languages.
 
+JSONPath tooling now includes `subscribe_jsonpath`, a lightweight notification hook that fires (with possible false positives) when changes might affect a query—ideal for debounced or throttled watchers.
+
 ## Supported Languages
 
 - [loro-swift](https://github.com/loro-dev/loro-swift): **Swift** Binding for Loro

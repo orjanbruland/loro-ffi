@@ -122,19 +122,11 @@ impl UndoManager {
     }
 
     pub fn top_undo_value(&self) -> Option<LoroValue> {
-        self.0
-            .lock()
-            .unwrap()
-            .top_undo_value()
-            .map(Into::into)
+        self.0.lock().unwrap().top_undo_value().map(Into::into)
     }
 
     pub fn top_redo_value(&self) -> Option<LoroValue> {
-        self.0
-            .lock()
-            .unwrap()
-            .top_redo_value()
-            .map(Into::into)
+        self.0.lock().unwrap().top_redo_value().map(Into::into)
     }
 }
 

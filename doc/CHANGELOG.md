@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.10.3
+
+- bump crate and dependency to loro 1.10.3
+- add `LoroDoc::subscribe_jsonpath` for lightweight JSONPath change notifications
+
 ## v1.10.0
 
 - bump crate and dependency to loro 1.10.0

@@ -15,8 +15,9 @@ use loro::{
 use crate::{
     event::{DiffBatch, DiffEvent, Subscriber},
     AbsolutePosition, Configure, ContainerID, ContainerIdLike, Cursor, Frontiers, Index,
-    LoroCounter, LoroList, LoroMap, LoroMovableList, LoroText, LoroTree, LoroValue, StyleConfigMap,
-    ValueOrContainer, VersionRange, VersionVector, VersionVectorDiff, JsonPathError,
+    JsonPathError, LoroCounter, LoroList, LoroMap, LoroMovableList, LoroText, LoroTree, LoroValue,
+    StyleConfigMap, SubscribeJsonPathCallback, ValueOrContainer, VersionRange, VersionVector,
+    VersionVectorDiff,
 };
 
 /// Decodes the metadata for an imported blob from the provided bytes.
@@ -737,6 +738,25 @@ impl LoroDoc {
         })
     }
 
+    /// Subscribe to updates that may affect the given JSONPath query.
+    ///
+    /// The callback may fire false positives; it is intended as a lightweight signal so callers
+    /// can debounce or throttle before running an expensive JSONPath query themselves.
+    #[inline]
+    pub fn subscribe_jsonpath(
+        &self,
+        path: &str,
+        callback: Arc<dyn JsonPathSubscriber>,
+    ) -> LoroResult<Arc<Subscription>> {
+        let callback: SubscribeJsonPathCallback = Arc::new(move || {
+            callback.on_jsonpath_changed();
+        });
+
+        self.doc
+            .subscribe_jsonpath(path, callback)
+            .map(|subscription| Arc::new(subscription.into()))
+    }
+
     pub fn travel_change_ancestors(
         &self,
         ids: &[ID],
@@ -964,6 +984,10 @@ impl<T: TryInto<JsonSchema> + Clone> JsonSchemaLike for T {
             .try_into()
             .map_err(|_| LoroError::InvalidJsonSchema)
     }
+}
+
+pub trait JsonPathSubscriber: Sync + Send {
+    fn on_jsonpath_changed(&self);
 }
 
 pub trait LocalUpdateCallback: Sync + Send {
