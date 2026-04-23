@@ -34,7 +34,6 @@ pub use ephemeral::*;
 mod fractional_index;
 pub use fractional_index::*;
 
-// https://github.com/mozilla/uniffi-rs/issues/1372
 #[uniffi::trait_interface]
 pub trait ValueOrContainer: Send + Sync {
     fn is_value(&self) -> bool;

@@ -481,8 +481,9 @@ interface LoroDoc{
     /// The parsed ops will be dropped
     void compact_change_store();
 
-    // /// Export the document in the given mode.
-    // bytes export(ExportMode mode);
+    /// Export the document in the given mode.
+    [Throws=LoroEncodeError]
+    bytes export(ExportMode mode);
 
     [Throws=LoroEncodeError]
     bytes export_updates_in_range([ByRef]sequence<IdSpan> spans);
@@ -1428,15 +1429,15 @@ interface LoroUnknown{
 
 // ============= TYPES =============
 
-// TODO: https://github.com/mozilla/uniffi-rs/issues/1372
-// [Enum]
-// interface ExportMode{
-//     Snapshot();
-//     Updates(VersionVector from);
-//     UpdatesInRange(sequence<IdSpan> spans);
-//     GcSnapshot(Frontiers frontiers);
-//     StateOnly(Frontiers? frontiers);
-// };
+[Enum]
+interface ExportMode{
+    Snapshot();
+    Updates(VersionVector from);
+    UpdatesInRange(sequence<IdSpan> spans);
+    ShallowSnapshot(Frontiers frontiers);
+    StateOnly(Frontiers? frontiers);
+    SnapshotAt(Frontiers frontiers);
+};
 
 [Remote]
 dictionary ChangeMeta{
