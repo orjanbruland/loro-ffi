@@ -71,7 +71,6 @@ impl LoroMap {
             .map(|v| Arc::new(v) as Arc<dyn ValueOrContainer>)
     }
 
-    // TODO: uniffi v0.29
     pub fn get_or_create_text_container(
         &self,
         key: &str,

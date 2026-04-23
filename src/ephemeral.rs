@@ -11,10 +11,12 @@ pub struct EphemeralStoreEvent {
     pub updated: Vec<String>,
 }
 
+#[uniffi::trait_interface]
 pub trait LocalEphemeralListener: Sync + Send {
     fn on_ephemeral_update(&self, update: Vec<u8>);
 }
 
+#[uniffi::trait_interface]
 pub trait EphemeralSubscriber: Sync + Send {
     fn on_ephemeral_event(&self, event: EphemeralStoreEvent);
 }

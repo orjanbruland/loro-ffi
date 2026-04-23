@@ -130,6 +130,7 @@ impl UndoManager {
     }
 }
 
+#[uniffi::trait_interface]
 pub trait OnPush: Send + Sync {
     fn on_push(
         &self,
@@ -139,6 +140,7 @@ pub trait OnPush: Send + Sync {
     ) -> UndoItemMeta;
 }
 
+#[uniffi::trait_interface]
 pub trait OnPop: Send + Sync {
     fn on_pop(
         &self,
