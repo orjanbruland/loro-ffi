@@ -1,6 +1,5 @@
 use loro::sync::RwLock;
 use loro::StyleConfig;
-use loro::sync::RwLock;
 use std::sync::Arc;
 
 #[derive(Default)]
