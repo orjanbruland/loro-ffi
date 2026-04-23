@@ -117,6 +117,7 @@ interface LoroDoc{
     /// Fork the document at the given frontiers.
     ///
     /// The created doc will only contain the history before the specified frontiers.
+    [Throws=LoroError]
     LoroDoc fork_at([ByRef] Frontiers frontiers);
 
     /// Get the configurations of the document.

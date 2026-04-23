@@ -1,6 +1,6 @@
+use loro::sync::RwLock;
 use loro::StyleConfig;
 use std::sync::Arc;
-use std::sync::RwLock;
 
 #[derive(Default)]
 pub struct Configure(loro::Configure);
@@ -27,7 +27,7 @@ impl Configure {
     }
 
     pub fn text_style_config(&self) -> Arc<StyleConfigMap> {
-        Arc::new(StyleConfigMap(self.0.text_style_config().clone()))
+        Arc::new(StyleConfigMap(Arc::clone(self.0.text_style_config())))
     }
 }
 
@@ -40,11 +40,11 @@ impl StyleConfigMap {
     }
 
     pub fn insert(&self, key: &str, value: StyleConfig) {
-        self.0.write().unwrap().insert(key.into(), value);
+        self.0.write().insert(key.into(), value);
     }
 
     pub fn get(&self, key: &str) -> Option<StyleConfig> {
-        let m = self.0.read().unwrap();
+        let m = self.0.read();
         m.get(&(key.into()))
     }
 
@@ -55,7 +55,7 @@ impl StyleConfigMap {
     }
 
     pub(crate) fn to_loro(&self) -> loro::StyleConfigMap {
-        self.0.read().unwrap().clone()
+        self.0.read().clone()
     }
 }
 
