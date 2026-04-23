@@ -1,3 +1,4 @@
+use loro::sync::RwLock;
 use loro::StyleConfig;
 use loro::sync::RwLock;
 use std::sync::Arc;
@@ -27,7 +28,7 @@ impl Configure {
     }
 
     pub fn text_style_config(&self) -> Arc<StyleConfigMap> {
-        Arc::new(StyleConfigMap(self.0.text_style_config().clone()))
+        Arc::new(StyleConfigMap(Arc::clone(self.0.text_style_config())))
     }
 }
 
