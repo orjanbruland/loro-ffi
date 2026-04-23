@@ -46,9 +46,9 @@ impl LoroDoc {
         Arc::new(LoroDoc { doc })
     }
 
-    pub fn fork_at(&self, frontiers: &Frontiers) -> Arc<Self> {
-        let doc = self.doc.fork_at(&frontiers.into());
-        Arc::new(LoroDoc { doc })
+    pub fn fork_at(&self, frontiers: &Frontiers) -> LoroResult<Arc<Self>> {
+        let doc = self.doc.fork_at(&frontiers.into())?;
+        Ok(Arc::new(LoroDoc { doc }))
     }
 
     /// Get the configurations of the document.
