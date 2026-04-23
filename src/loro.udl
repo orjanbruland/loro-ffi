@@ -661,6 +661,7 @@ interface LoroDoc{
     void delete_root_container(ContainerID cid);
 };
 
+[Remote]
 dictionary ContainerPath{
     ContainerID id;
     Index path;
@@ -1006,7 +1007,6 @@ interface LoroMap{
     /// Get the value of the map with the given key.
     ValueOrContainer? get([ByRef] string key);
 
-    // TODO: uniffi v0.29
     [Throws=LoroError]
     LoroList get_or_create_list_container([ByRef] string key, LoroList child);
     [Throws=LoroError]
@@ -1438,6 +1438,7 @@ interface LoroUnknown{
 //     StateOnly(Frontiers? frontiers);
 // };
 
+[Remote]
 dictionary ChangeMeta{
     /// Lamport timestamp of the Change
     u32 lamport;
@@ -1454,6 +1455,7 @@ dictionary ChangeMeta{
     u32 len;
 };
 
+[Remote]
 dictionary ImportBlobMetadata{
     /// The partial start version vector.
     ///
@@ -1474,21 +1476,25 @@ dictionary ImportBlobMetadata{
     string mode;
 };
 
+[Remote]
 dictionary ImportStatus{
     record<u64, CounterSpan> success;
     record<u64, CounterSpan>? pending;
 };
 
+[Remote]
 enum Ordering{
     "Less", "Equal", "Greater"
 };
 
+[Remote]
 dictionary PreCommitCallbackPayload{
     ChangeMeta change_meta;
     string origin;
     ChangeModifier modifier;
 };
 
+[Remote]
 dictionary FirstCommitFromPeerPayload{
     u64 peer;
 };
@@ -1517,10 +1523,12 @@ interface StyleConfigMap{
     StyleConfig? get([ByRef] string key);
 };
 
+[Remote]
 dictionary StyleConfig{
     ExpandType expand;
 };
 
+[Remote]
 enum ExpandType{
     "Before",
     "After",
@@ -1528,6 +1536,7 @@ enum ExpandType{
     "None",
 };
 
+[Remote]
 dictionary CommitOptions{
     string? origin;
     boolean immediate_renew;
@@ -1538,12 +1547,14 @@ dictionary CommitOptions{
 // ============= CURSOR =============
 
 
+[Remote]
 enum Side{
     "Left",
     "Middle",
     "Right",
 };
 
+[Remote]
 enum PosType{
     "Bytes",
     "Unicode",
@@ -1559,11 +1570,13 @@ interface Cursor{
     constructor([ByRef]bytes data);
 };
 
+[Remote]
 dictionary PosQueryResult{
     Cursor? update;
     AbsolutePosition current;
 };
 
+[Remote]
 dictionary AbsolutePosition{
     u32 pos;
     Side side;
@@ -1582,11 +1595,13 @@ interface Awareness{
     u64 peer();
 };
 
+[Remote]
 dictionary AwarenessPeerUpdate{
     sequence<u64> updated;
     sequence<u64> added;
 };
 
+[Remote]
 dictionary PeerInfo{
     LoroValue state;
     i32 counter;
@@ -1609,6 +1624,7 @@ interface EphemeralStore{
     Subscription subscribe(EphemeralSubscriber listener);
 };
 
+[Remote]
 dictionary EphemeralStoreEvent{
     EphemeralEventTrigger by;
     sequence<string> added;
@@ -1616,6 +1632,7 @@ dictionary EphemeralStoreEvent{
     sequence<string> updated;
 };
 
+[Remote]
 enum EphemeralEventTrigger{
     "Local", 
     "Import", 
@@ -1660,6 +1677,7 @@ interface Frontiers{
     sequence<ID> to_vec();
 };
 
+[Remote]
 dictionary VersionVectorDiff{
     /// need to add these spans to move from right to left
     record<u64, CounterSpan> retreat;
@@ -1709,6 +1727,7 @@ interface VersionRange{
     sequence<VersionRangeItem> get_all_ranges();
 };
 
+[Remote]
 dictionary VersionRangeItem{
     u64 peer;
     i32 start;
@@ -1792,25 +1811,30 @@ interface UndoManager{
     LoroValue? top_redo_value();
 };
 
+[Remote]
 enum UndoOrRedo{
     "Undo", "Redo",
 };
 
+[Remote]
 dictionary CounterSpan{
     i32 start;
     i32 end;
 };
 
+[Remote]
 dictionary UndoItemMeta{
     LoroValue value;
     sequence<CursorWithPos> cursors;
 };
 
+[Remote]
 dictionary CursorWithPos{
     Cursor cursor;
     AbsolutePosition pos;
 };
 
+[Remote]
 dictionary AbsolutePosition{
     u32 pos;
     Side side;
@@ -1818,6 +1842,7 @@ dictionary AbsolutePosition{
 
 // ============= EVENTS =============
 
+[Remote]
 dictionary DiffEvent{
     /// How the event is triggered.
     EventTriggerKind triggered_by;
@@ -1830,6 +1855,7 @@ dictionary DiffEvent{
 };
 
 /// A diff of a container.
+[Remote]
 dictionary ContainerDiff{
     /// The target container id of the diff.
     ContainerID target;
@@ -1870,15 +1896,18 @@ interface ListDiffItem{
     Retain(u32 retain);
 };
 
+[Remote]
 dictionary MapDelta{
     record<string, ValueOrContainer?> updated;
 };
 
+[Remote]
 dictionary TreeDiff{
     sequence<TreeDiffItem> diff;
 };
 
 
+[Remote]
 dictionary TreeDiffItem{
     TreeID target;
     TreeExternalDiff action;
@@ -1891,12 +1920,14 @@ interface TreeExternalDiff{
     Delete(TreeParentId old_parent, u32 old_index);
 };
 
+[Remote]
 dictionary PathItem{
     ContainerID container;
     Index index;
 };
 
 /// The kind of the event trigger.
+[Remote]
 enum EventTriggerKind{
     /// The event is triggered by a local transaction.
     "Local",
@@ -1945,12 +1976,14 @@ interface DiffBatch{
     sequence<ContainerIDAndDiff> get_diff();
 };
 
+[Remote]
 dictionary ContainerIDAndDiff{
     ContainerID cid;
     Diff diff;
 };
 
 // ============= TYPES =============
+[Remote]
 dictionary TreeID{
     u64 peer;
     i32 counter;
@@ -1964,6 +1997,7 @@ interface TreeParentId{
     Unexist();
 };
 
+[Remote]
 dictionary UpdateOptions{
    f64? timeout_ms;
    boolean use_refined_diff;
@@ -1978,21 +2012,25 @@ interface FractionalIndex{
 };
 
 
+[Remote]
 dictionary ID{
     u64 peer;
     i32 counter;
 };
 
+[Remote]
 dictionary IdLp{
     u32 lamport;
     u64 peer;
 };
 
+[Remote]
 dictionary IdSpan{
     u64 peer;
     CounterSpan counter;
 };
 
+[Remote]
 dictionary CounterSpan{
     i32 start;
     i32 end;
@@ -2016,6 +2054,7 @@ interface ContainerID{
     Normal(u64 peer,i32 counter, ContainerType container_type);
 };
 
+[Remote]
 dictionary FrontiersOrID{
     Frontiers? frontiers;
     ID? id;
@@ -2034,7 +2073,7 @@ interface LoroValue{
     Container(ContainerID value);
 };
 
-[Error]
+[Error, Remote]
 enum LoroError {
     "UnmatchedContext",
     "DecodeVersionVectorError",
@@ -2077,33 +2116,33 @@ enum LoroError {
     "UndoGroupAlreadyStarted",
 };
 
-[Error]
+[Error, Remote]
 enum CannotFindRelativePosition{
     "ContainerDeleted",
     "HistoryCleared",
     "IdNotFound"
 };
 
-[Error]
+[Error, Remote]
 enum JsonPathError{
     "InvalidJsonPath",
     "EvaluationError"
 };
 
-[Error, NonExhaustive]
+[Error, NonExhaustive, Remote]
 enum LoroEncodeError{
     "FrontiersNotFound",
     "ShallowSnapshotIncompatibleWithOldFormat",
     "UnknownContainer",
 };
 
-[Error]
+[Error, Remote]
 enum ChangeTravelError{
     "TargetIdNotFound",
     "TargetVersionNotIncluded"
 };
 
-[Error]
+[Error, Remote]
 enum UpdateTimeoutError{
     "Timeout"
 };

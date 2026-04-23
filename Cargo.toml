@@ -19,10 +19,10 @@ path = "src/uniffi-bindgen.rs"
 [dependencies]
 loro = { version = "1.11.1", features = ["counter", "jsonpath"] }
 serde_json = { version = "1" }
-uniffi = { version = "0.28.3" }
+uniffi = { version = "0.31.1" }
 
 [build-dependencies]
-uniffi = { version = "0.28.3", features = ["build"] }
+uniffi = { version = "0.31.1", features = ["build"] }
 
 [features]
 cli = ["uniffi/cli"]

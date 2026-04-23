@@ -10,6 +10,7 @@ use crate::{
     convert_trait_to_v_or_container, ContainerID, LoroValue, TreeParentId, ValueOrContainer,
 };
 
+#[uniffi::trait_interface]
 pub trait Subscriber: Sync + Send {
     fn on_diff(&self, diff: DiffEvent);
 }

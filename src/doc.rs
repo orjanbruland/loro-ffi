@@ -876,6 +876,7 @@ impl LoroDoc {
     }
 }
 
+#[uniffi::trait_interface]
 pub trait ChangeAncestorsTraveler: Sync + Send {
     fn travel(&self, change: ChangeMeta) -> bool;
 }
@@ -986,14 +987,17 @@ impl<T: TryInto<JsonSchema> + Clone> JsonSchemaLike for T {
     }
 }
 
+#[uniffi::trait_interface]
 pub trait JsonPathSubscriber: Sync + Send {
     fn on_jsonpath_changed(&self);
 }
 
+#[uniffi::trait_interface]
 pub trait LocalUpdateCallback: Sync + Send {
     fn on_local_update(&self, update: Vec<u8>);
 }
 
+#[uniffi::trait_interface]
 pub trait FirstCommitFromPeerCallback: Sync + Send {
     fn on_first_commit_from_peer(&self, e: FirstCommitFromPeerPayload);
 }
@@ -1002,6 +1006,7 @@ pub struct FirstCommitFromPeerPayload {
     pub peer: PeerID,
 }
 
+#[uniffi::trait_interface]
 pub trait PreCommitCallback: Sync + Send {
     fn on_pre_commit(&self, e: PreCommitCallbackPayload);
 }
@@ -1023,6 +1028,7 @@ impl ChangeModifier {
     }
 }
 
+#[uniffi::trait_interface]
 pub trait Unsubscriber: Sync + Send {
     fn on_unsubscribe(&self);
 }
