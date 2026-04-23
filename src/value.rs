@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use loro::{Counter, PeerID};
 
+#[uniffi::trait_interface]
 pub trait LoroValueLike: Sync + Send {
     fn as_loro_value(&self) -> crate::LoroValue;
 }

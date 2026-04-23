@@ -46,9 +46,9 @@ impl LoroDoc {
         Arc::new(LoroDoc { doc })
     }
 
-    pub fn fork_at(&self, frontiers: &Frontiers) -> Arc<Self> {
-        let doc = self.doc.fork_at(&frontiers.into());
-        Arc::new(LoroDoc { doc })
+    pub fn fork_at(&self, frontiers: &Frontiers) -> LoroResult<Arc<Self>> {
+        let doc = self.doc.fork_at(&frontiers.into())?;
+        Ok(Arc::new(LoroDoc { doc }))
     }
 
     /// Get the configurations of the document.
@@ -394,7 +394,6 @@ impl LoroDoc {
             .collect()
     }
 
-    // TODO: add export method
     /// Export all the ops not included in the given `VersionVector`
     #[inline]
     pub fn export_updates(&self, vv: &VersionVector) -> Result<Vec<u8>, LoroEncodeError> {
@@ -662,11 +661,11 @@ impl LoroDoc {
         self.doc.compact_change_store()
     }
 
-    // TODO: https://github.com/mozilla/uniffi-rs/issues/1372
     /// Export the document in the given mode.
-    // pub fn export(&self, mode: ExportMode) -> Vec<u8> {
-    //     self.doc.export(mode.into())
-    // }
+    pub fn export(&self, mode: ExportMode) -> Result<Vec<u8>, LoroEncodeError> {
+        self.doc.export(mode.into())
+    }
+
     pub fn export_updates_in_range(&self, spans: &[IdSpan]) -> Result<Vec<u8>, LoroEncodeError> {
         self.doc.export(loro::ExportMode::UpdatesInRange {
             spans: Cow::Borrowed(spans),
@@ -876,6 +875,7 @@ impl LoroDoc {
     }
 }
 
+#[uniffi::trait_interface]
 pub trait ChangeAncestorsTraveler: Sync + Send {
     fn travel(&self, change: ChangeMeta) -> bool;
 }
@@ -986,14 +986,17 @@ impl<T: TryInto<JsonSchema> + Clone> JsonSchemaLike for T {
     }
 }
 
+#[uniffi::trait_interface]
 pub trait JsonPathSubscriber: Sync + Send {
     fn on_jsonpath_changed(&self);
 }
 
+#[uniffi::trait_interface]
 pub trait LocalUpdateCallback: Sync + Send {
     fn on_local_update(&self, update: Vec<u8>);
 }
 
+#[uniffi::trait_interface]
 pub trait FirstCommitFromPeerCallback: Sync + Send {
     fn on_first_commit_from_peer(&self, e: FirstCommitFromPeerPayload);
 }
@@ -1002,6 +1005,7 @@ pub struct FirstCommitFromPeerPayload {
     pub peer: PeerID,
 }
 
+#[uniffi::trait_interface]
 pub trait PreCommitCallback: Sync + Send {
     fn on_pre_commit(&self, e: PreCommitCallbackPayload);
 }
@@ -1023,6 +1027,7 @@ impl ChangeModifier {
     }
 }
 
+#[uniffi::trait_interface]
 pub trait Unsubscriber: Sync + Send {
     fn on_unsubscribe(&self);
 }
@@ -1064,33 +1069,37 @@ pub struct PosQueryResult {
     pub current: AbsolutePosition,
 }
 
-// pub enum ExportMode {
-//     Snapshot,
-//     Updates { from: VersionVector },
-//     UpdatesInRange { spans: Vec<IdSpan> },
-//     ShallowSnapshot { frontiers: Frontiers },
-//     StateOnly { frontiers: Option<Frontiers> },
-// }
+pub enum ExportMode {
+    Snapshot,
+    Updates { from: Arc<VersionVector> },
+    UpdatesInRange { spans: Vec<IdSpan> },
+    ShallowSnapshot { frontiers: Arc<Frontiers> },
+    StateOnly { frontiers: Option<Arc<Frontiers>> },
+    SnapshotAt { frontiers: Arc<Frontiers> },
+}
 
-// impl From<ExportMode> for loro::ExportMode<'_> {
-//     fn from(value: ExportMode) -> Self {
-//         match value {
-//             ExportMode::Snapshot => loro::ExportMode::Snapshot,
-//             ExportMode::Updates { from } => loro::ExportMode::Updates {
-//                 from: Cow::Owned(from.into()),
-//             },
-//             ExportMode::UpdatesInRange { spans } => loro::ExportMode::UpdatesInRange {
-//                 spans: Cow::Owned(spans),
-//             },
-//             ExportMode::ShallowSnapshot { frontiers } => {
-//                 loro::ExportMode::ShallowSnapshot(Cow::Owned(frontiers.into()))
-//             }
-//             ExportMode::StateOnly { frontiers } => {
-//                 loro::ExportMode::StateOnly(frontiers.map(|x| Cow::Owned(x.into())))
-//             }
-//         }
-//     }
-// }
+impl From<ExportMode> for loro::ExportMode<'static> {
+    fn from(value: ExportMode) -> Self {
+        match value {
+            ExportMode::Snapshot => loro::ExportMode::Snapshot,
+            ExportMode::Updates { from } => loro::ExportMode::Updates {
+                from: Cow::Owned(from.as_ref().into()),
+            },
+            ExportMode::UpdatesInRange { spans } => loro::ExportMode::UpdatesInRange {
+                spans: Cow::Owned(spans),
+            },
+            ExportMode::ShallowSnapshot { frontiers } => {
+                loro::ExportMode::ShallowSnapshot(Cow::Owned(frontiers.as_ref().into()))
+            }
+            ExportMode::StateOnly { frontiers } => loro::ExportMode::StateOnly(
+                frontiers.map(|x| Cow::Owned(x.as_ref().into())),
+            ),
+            ExportMode::SnapshotAt { frontiers } => loro::ExportMode::SnapshotAt {
+                version: Cow::Owned(frontiers.as_ref().into()),
+            },
+        }
+    }
+}
 
 pub struct ContainerPath {
     pub id: ContainerID,

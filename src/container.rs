@@ -16,6 +16,7 @@ pub use unknown::LoroUnknown;
 
 use crate::{ContainerID, ContainerType};
 
+#[uniffi::trait_interface]
 pub trait ContainerIdLike: Send + Sync {
     fn as_container_id(&self, ty: ContainerType) -> ContainerID;
 }
